@@ -1,0 +1,6 @@
+*.stl
+*.kicad_pcb-bak
+*.sch-bak
+*.net
+kicad/fp-info-cache
+/result
