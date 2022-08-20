@@ -7,7 +7,7 @@
         let
           pkgs = nixpkgs.legacyPackages."${system}";
         in
-        pkgs.poetry2nix.mkPoetryScriptsPackage {
+        pkgs.poetry2nix.mkPoetryApplication {
           projectDir = ./.;
           python = pkgs.python3;
         };
