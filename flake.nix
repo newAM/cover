@@ -1,35 +1,26 @@
 {
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
-    poetry2nix.url = "github:nix-community/poetry2nix";
-  };
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-  outputs = { self, nixpkgs, flake-utils, poetry2nix }:
-    nixpkgs.lib.recursiveUpdate
-      {
-        overlays.default = final: prev: {
-          cover = self.packages.${prev.system}.default;
-        };
-        nixosModules.default = import ./module.nix;
-
-        overlay = nixpkgs.lib.composeManyExtensions [
-          poetry2nix.overlay
-          (final: prev: {
-            cover = prev.poetry2nix.mkPoetryApplication {
-              projectDir = ./.;
-            };
-          })
-        ];
-      }
-      (flake-utils.lib.eachDefaultSystem (system:
+  outputs = { self, nixpkgs }:
+    let
+      mkPackage = system:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [ self.overlay ];
-          };
+          pkgs = nixpkgs.legacyPackages."${system}";
         in
-        {
-          packages.default = pkgs.cover;
-        }));
+        pkgs.poetry2nix.mkPoetryScriptsPackage {
+          projectDir = ./.;
+          python = pkgs.python3;
+        };
+    in
+    {
+      overlays.default = final: prev: {
+        cover = self.packages.${prev.system}.default;
+      };
+      nixosModules.default = import ./module.nix;
+
+      packages = {
+        aarch64-linux.default = mkPackage "aarch64-linux";
+        x86_64-linux.default = mkPackage "x86_64-linux";
+      };
+    };
 }
