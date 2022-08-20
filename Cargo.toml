@@ -1,0 +1,13 @@
+[package]
+name = "cover"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.62"
+ctrlc = "3.2.3"
+log = "0.4.17"
+rppal = "0.13.1"
+rumqttc = "0.14.0"
+systemd-journal-logger = "0.5.0"
+tokio = { version = "1.20.1", features = ["rt-multi-thread", "rt", "macros", "time", "sync"] }

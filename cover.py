@@ -325,6 +325,7 @@ def on_message(client, userdata, msg, covers: List[Cover]):
         )
 
 
+
 def on_connect(client, userdata, flags, rc, covers: List[Cover]):
     logger.info(f"connected to MQTT server with code {rc}")
 

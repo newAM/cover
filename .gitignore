@@ -4,3 +4,8 @@
 *.net
 kicad/fp-info-cache
 /result
+
+
+# Added by cargo
+
+/target
