@@ -2,7 +2,7 @@
 
 """ Cover controller script. """
 
-from gpiozero import PWMLED, Button
+from gpiozero import LED, Button
 from typing import Optional
 from typing import List
 from typing import Tuple
@@ -86,8 +86,8 @@ class Cover:
             extra={"base_topic": base_topic},
         )
 
-        self.up_motor = PWMLED(up_motor_pin)
-        self.down_motor = PWMLED(down_motor_pin)
+        self.up_motor = LED(up_motor_pin)
+        self.down_motor = LED(down_motor_pin)
         self.lower_limit = Button(down_limit_pin)
         self.upper_limit = Button(up_limit_pin)
         self.down_time_limit = down_time_limit
@@ -120,15 +120,15 @@ class Cover:
         )
 
         if self._state == STATE_OPENING:
-            self.up_motor.value = 0
-            self.down_motor.value = 1
+            self.up_motor.off()
+            self.down_motor.on()
             time.sleep(0.12)
-            self.down_motor.value = 0
+            self.down_motor.off()
         elif self._state == STATE_CLOSING:
-            self.down_motor.value = 0
-            self.up_motor.value = 1
+            self.down_motor.off()
+            self.up_motor.on()
             time.sleep(0.12)
-            self.up_motor.value = 0
+            self.up_motor.off()
 
         if (
             state not in {STATE_OPEN, STATE_CLOSED}
@@ -167,8 +167,8 @@ class Cover:
             self.set_state(STATE_CLOSED)
             return
 
-        self.up_motor.value = 0
-        self.down_motor.value = 1
+        self.up_motor.off()
+        self.down_motor.on()
 
         elapsed = self.state_elapsed()
         if elapsed > self.down_time_limit:
@@ -192,8 +192,8 @@ class Cover:
             self.set_state(STATE_OPEN)
             return
 
-        self.down_motor.value = 0
-        self.up_motor.value = 1
+        self.down_motor.off()
+        self.up_motor.on()
 
         elapsed = self.state_elapsed()
         if elapsed > self.up_time_limit:
@@ -304,8 +304,8 @@ class Cover:
             self.state_error()
 
     def motor_stop(self):
-        self.up_motor.value = 0
-        self.down_motor.value = 0
+        self.up_motor.off()
+        self.down_motor.off()
 
 
 def on_message(client, userdata, msg, covers: List[Cover]):

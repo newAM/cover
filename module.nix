@@ -19,7 +19,7 @@ in
           Restart = "on-failure";
           RestartSec = 10;
         };
-        environment.GPIOZERO_PIN_FACTORY = "rpigpio";
+        environment.GPIOZERO_PIN_FACTORY = "native";
       };
   };
 }
