@@ -3,8 +3,9 @@
 """ Cover controller script. """
 
 from gpiozero import LED, Button
-from typing import Optional
+from systemd.journal import JournalHandler
 from typing import List
+from typing import Optional
 from typing import Tuple
 import daemon
 import functools
@@ -13,10 +14,10 @@ import logging
 import logging.handlers
 import os
 import paho.mqtt.client as mqtt
+import posixpath
 import queue
 import sys
 import time
-import posixpath
 
 logger = logging.getLogger(__name__)
 
@@ -333,15 +334,11 @@ def on_connect(client, userdata, flags, rc, covers: List[Cover]):
         client.subscribe(cover.set_topic)
 
 
-def start_daemon(log_file: str):
+def start_daemon():
     """Starts the daemonic process."""
-    handler = logging.handlers.RotatingFileHandler(
-        filename=log_file, mode="a", maxBytes=32768, backupCount=5
-    )
+    handler = JournalHandler(SYSLOG_IDENTIFIER="cover")
     handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        "[{asctime}] [{levelname:8s}] [{name}] {message}", style="{"
-    )
+    formatter = logging.Formatter("[{name}] {message}", style="{")
     handler.setFormatter(formatter)
 
     root_logger = logging.getLogger()
@@ -415,19 +412,14 @@ def main():
     folder_name = "hass_cover"
     file_name = folder_name
     drive_root = os.path.abspath(os.sep)
-    log_dir = os.path.join(drive_root, "var", "log", folder_name)
     pid_dir = os.path.join(drive_root, "var", "run", folder_name)
-    log_file = os.path.join(log_dir, f"{file_name}.log")
     pid_file = os.path.join(pid_dir, f"{file_name}.pid")
 
-    # create folders if they do not exist
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
     if not os.path.exists(pid_dir):
         os.makedirs(pid_dir)
 
     with daemon.DaemonContext(pidfile=lockfile.FileLock(pid_file)):
-        start_daemon(log_file)
+        start_daemon()
 
 
 if __name__ == "__main__":

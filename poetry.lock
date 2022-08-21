@@ -214,6 +214,14 @@ lockfile = ">=0.10"
 test = ["testtools", "testscenarios (>=0.4)", "docutils", "coverage"]
 
 [[package]]
+name = "systemd-python"
+version = "234"
+description = "Python interface for libsystemd"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -232,7 +240,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "9810444b42ed576abad83c6c1c0f5fb053555dc64d8af8c8a7dde50d7f98f2ce"
+content-hash = "7890fdfb8ee3e06ae2436c140c41acb8a52e7671eb4215e0cb4dd2eda55a6b2f"
 
 [metadata.files]
 attrs = [
@@ -330,6 +338,9 @@ pyflakes = [
 python-daemon = [
     {file = "python-daemon-2.3.1.tar.gz", hash = "sha256:15c2c5e2cef563e0a5f98d542b77ba59337380b472975d2b2fd6b8c4d5cf46ca"},
     {file = "python_daemon-2.3.1-py2.py3-none-any.whl", hash = "sha256:4e3bf67784c78aaa55ec001a2f832b464a54c5f9c89c11b311e2416a8c247431"},
+]
+systemd-python = [
+    {file = "systemd-python-234.tar.gz", hash = "sha256:fd0e44bf70eadae45aadc292cb0a7eb5b0b6372cd1b391228047d33895db83e7"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},

@@ -12,6 +12,7 @@ lockfile = "0.12.2"
 python-daemon = "^2.2.4"
 paho-mqtt = "^1.5.1"
 gpiozero = "^1.5.1"
+systemd-python = "234"
 
 [tool.poetry.dev-dependencies]
 black = "22.6.0"
