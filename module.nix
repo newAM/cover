@@ -6,6 +6,13 @@ in
 {
   options.services.cover = with lib; {
     enable = mkEnableOption "cover";
+
+    hostname = mkOption {
+      type = types.str;
+      description = ''
+        Hostname or IP of the MQTT server.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -15,7 +22,7 @@ in
         serviceConfig = {
           Type = "idle";
           KillSignal = "SIGINT";
-          ExecStart = "${pkgs.cover}/bin/cover";
+          ExecStart = "${pkgs.cover}/bin/cover ${cfg.hostname}";
           Restart = "on-failure";
           RestartSec = 10;
         };

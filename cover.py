@@ -7,6 +7,7 @@ from systemd.journal import JournalHandler
 from typing import List
 from typing import Optional
 from typing import Tuple
+import argparse
 import daemon
 import functools
 import lockfile
@@ -16,6 +17,7 @@ import os
 import paho.mqtt.client as mqtt
 import posixpath
 import queue
+import ssl
 import sys
 import time
 
@@ -334,7 +336,7 @@ def on_connect(client, userdata, flags, rc, covers: List[Cover]):
         client.subscribe(cover.set_topic)
 
 
-def start_daemon():
+def start_daemon(hostname: str):
     """Starts the daemonic process."""
     handler = JournalHandler(SYSLOG_IDENTIFIER="cover")
     handler.setLevel(logging.DEBUG)
@@ -386,7 +388,11 @@ def start_daemon():
 
         client.on_connect = functools.partial(on_connect, covers=covers)
         client.on_message = functools.partial(on_message, covers=covers)
-        client.connect("10.0.0.4", 1883)
+        ssl_context = ssl.SSLContext()
+        ssl_context.minimum_version = ssl.TLSVersion.TLSv1_3
+        ssl_context.load_verify_locations("/etc/ssl/certs/ca-bundle.crt")
+        client.tls_set_context(context=ssl_context)
+        client.connect(hostname, 8883)
         client.loop_start()
     except Exception:
         logger.exception("failed to init")
@@ -409,6 +415,12 @@ def start_daemon():
 
 
 def main():
+    parser = argparse.ArgumentParser(description="cover daemon")
+    parser.add_argument(
+        "hostname", type=str, help="MQTT server hostname or IPv4"
+    )
+    args = parser.parse_args()
+
     folder_name = "hass_cover"
     file_name = folder_name
     drive_root = os.path.abspath(os.sep)
@@ -419,7 +431,7 @@ def main():
         os.makedirs(pid_dir)
 
     with daemon.DaemonContext(pidfile=lockfile.FileLock(pid_file)):
-        start_daemon()
+        start_daemon(args.hostname)
 
 
 if __name__ == "__main__":
