@@ -6,19 +6,13 @@ authors = ["Alex Martens <alex@thinglab.org>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 lockfile = "0.12.2"
 python-daemon = "^2.2.4"
 paho-mqtt = "^1.5.1"
 gpiozero = "^1.5.1"
 systemd-python = "234"
-
-[tool.poetry.dev-dependencies]
-black = "22.6.0"
-flake8 = "5.0.4"
-flake8-bugbear = "22.7.1"
-pep8-naming = "0.13.2"
 
 [tool.poetry.scripts]
 cover = "cover:main"
