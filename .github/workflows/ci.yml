@@ -15,8 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v17
+        with:
+          extra_nix_config: |
+            extra-platforms = aarch64-linux
       - uses: cachix/cachix-action@v10
         with:
           name: newam
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: install aarch64-qemu
+        run: |
+          DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update -q -y
+          sudo apt-get install -q -y qemu-system-aarch64 qemu-efi binfmt-support qemu-user-static
       - run: nix flake check -L
