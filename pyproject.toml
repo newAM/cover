@@ -8,10 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 
-lockfile = "0.12.2"
-python-daemon = "^2.2.4"
-paho-mqtt = "^1.5.1"
-gpiozero = "^1.5.1"
+paho-mqtt = "^1.6.1"
+gpiozero = "^1.6.2"
 systemd-python = "234"
 
 [tool.poetry.scripts]

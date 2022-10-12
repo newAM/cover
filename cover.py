@@ -8,9 +8,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 import argparse
-import daemon
 import functools
-import lockfile
 import logging
 import logging.handlers
 import os
@@ -421,17 +419,7 @@ def main():
     )
     args = parser.parse_args()
 
-    folder_name = "hass_cover"
-    file_name = folder_name
-    drive_root = os.path.abspath(os.sep)
-    pid_dir = os.path.join(drive_root, "var", "run", folder_name)
-    pid_file = os.path.join(pid_dir, f"{file_name}.pid")
-
-    if not os.path.exists(pid_dir):
-        os.makedirs(pid_dir)
-
-    with daemon.DaemonContext(pidfile=lockfile.FileLock(pid_file)):
-        start_daemon(args.hostname)
+    start_daemon(args.hostname)
 
 
 if __name__ == "__main__":
