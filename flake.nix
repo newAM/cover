@@ -25,6 +25,13 @@
                 --replace "/proc/cpuinfo" "${proc_cpuinfo}"
             '';
           });
+          systemd-python = super.systemd-python.overridePythonAttrs (old: {
+            nativeBuildInputs =
+              (old.nativeBuildInputs or [])
+              ++ [
+                self.setuptools
+              ];
+          });
         });
       };
   in {
