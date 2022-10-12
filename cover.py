@@ -11,7 +11,6 @@ import argparse
 import functools
 import logging
 import logging.handlers
-import os
 import paho.mqtt.client as mqtt
 import posixpath
 import queue
