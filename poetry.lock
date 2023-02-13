@@ -71,16 +71,16 @@ testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (
 
 [[package]]
 name = "systemd-python"
-version = "234"
+version = "235"
 description = "Python interface for libsystemd"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "systemd-python-234.tar.gz", hash = "sha256:fd0e44bf70eadae45aadc292cb0a7eb5b0b6372cd1b391228047d33895db83e7"},
+    {file = "systemd-python-235.tar.gz", hash = "sha256:4e57f39797fd5d9e2d22b8806a252d7c0106c936039d1e71c8c6b8008e695c0a"},
 ]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "fc44a9165bc4940b5b0a759ea33e22d4f3e29af46225191a121f9ddae7215c54"
+content-hash = "169c8e48a85c6117e6ee4ab8f10c2294c92a71e0cb5c1a7204a9a1c4aef861f3"
