@@ -5,17 +5,12 @@
     self,
     nixpkgs,
   }: let
-    src = builtins.path {
-      path = ./.;
-      name = "cover";
-    };
-
     mkPackage = system: let
       pkgs = nixpkgs.legacyPackages."${system}";
       proc_cpuinfo = ./proc_cpuinfo.txt;
     in
       pkgs.poetry2nix.mkPoetryApplication {
-        projectDir = src;
+        projectDir = self;
         # Hacks to fix: https://github.com/NixOS/nixpkgs/issues/122993
         overrides = pkgs.poetry2nix.overrides.withDefaults (self: super: {
           rpi-gpio = super.rpi-gpio.overridePythonAttrs (old: {
@@ -51,8 +46,8 @@
     };
 
     checks.x86_64-linux = let
-      nixSrc = nixpkgs.lib.sources.sourceFilesBySuffices src [".nix"];
-      pySrc = nixpkgs.lib.sources.sourceFilesBySuffices src [".py"];
+      nixSrc = nixpkgs.lib.sources.sourceFilesBySuffices self [".nix"];
+      pySrc = nixpkgs.lib.sources.sourceFilesBySuffices self [".py"];
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in {
       pkg-aarch64-linux = self.packages.aarch64-linux.default;
