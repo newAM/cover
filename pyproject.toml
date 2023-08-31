@@ -20,5 +20,5 @@ cover = "cover:main"
 line-length = 79
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
