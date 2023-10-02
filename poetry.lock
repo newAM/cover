@@ -20,13 +20,13 @@ test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "gpiozero"
-version = "1.6.2"
-description = "A simple interface to GPIO devices with Raspberry Pi."
+version = "2.0"
+description = "A simple interface to GPIO devices with Raspberry Pi"
 optional = false
 python-versions = "*"
 files = [
-    {file = "gpiozero-1.6.2-py2.py3-none-any.whl", hash = "sha256:9af00b90d4fa775aa1fc023363e4aa5539844a5b0c461be5ced5cfabba364d99"},
-    {file = "gpiozero-1.6.2.tar.gz", hash = "sha256:0eb95a9db372146813276f92de7f43c883a3e9fe69597fc3d29c04ef3d5d5f9e"},
+    {file = "gpiozero-2.0-py3-none-any.whl", hash = "sha256:a103ff70c96f333841480fe1b1dbb8bc869438805ed291bf0b8bf7c95d3b915d"},
+    {file = "gpiozero-2.0.tar.gz", hash = "sha256:403bcc9e7f24f0877653e7fced91ba51508d5197c9d1f80e383fe6693b9c3c27"},
 ]
 
 [package.dependencies]
@@ -34,7 +34,7 @@ colorzero = "*"
 
 [package.extras]
 doc = ["sphinx", "sphinx-rtd-theme"]
-test = ["RPi.GPIO", "coverage", "mock", "pigpio", "pytest"]
+test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "paho-mqtt"
@@ -78,4 +78,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "169c8e48a85c6117e6ee4ab8f10c2294c92a71e0cb5c1a7204a9a1c4aef861f3"
+content-hash = "dacd0432168b8aa389fa9b7611a95831f02223ad83aae9555f78a446373f256c"
