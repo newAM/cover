@@ -1,12 +1,20 @@
 {
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    poetry2nix.url = "github:nix-community/poetry2nix";
+    poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs = {
     self,
     nixpkgs,
+    poetry2nix,
   }: let
     mkPackage = system: let
-      pkgs = nixpkgs.legacyPackages."${system}";
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        overlays = [poetry2nix.overlays.default];
+      };
       proc_cpuinfo = ./proc_cpuinfo.txt;
     in
       pkgs.poetry2nix.mkPoetryApplication {
