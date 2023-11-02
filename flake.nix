@@ -10,48 +10,51 @@
     nixpkgs,
     poetry2nix,
   }: let
-    mkPackage = system: let
-      pkgs = import nixpkgs {
-        system = "x86_64-linux";
-        overlays = [poetry2nix.overlays.default];
-      };
-      proc_cpuinfo = ./proc_cpuinfo.txt;
-    in
-      pkgs.poetry2nix.mkPoetryApplication {
+    overlay = final: prev: {
+      cover = prev.poetry2nix.mkPoetryApplication {
         projectDir = self;
         # Hacks to fix: https://github.com/NixOS/nixpkgs/issues/122993
-        overrides = pkgs.poetry2nix.overrides.withDefaults (self: super: {
-          rpi-gpio = super.rpi-gpio.overridePythonAttrs (old: {
+        overrides = prev.poetry2nix.overrides.withDefaults (pyFinal: pyPrev: {
+          rpi-gpio = pyPrev.rpi-gpio.overridePythonAttrs (old: {
             postPatch = ''
               substituteInPlace source/cpuinfo.c \
-                --replace "/proc/cpuinfo" "${proc_cpuinfo}"
+                --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
             '';
           });
-          gpiozero = super.gpiozero.overridePythonAttrs (old: {
+          gpiozero = pyPrev.gpiozero.overridePythonAttrs (old: {
             postPatch = ''
               substituteInPlace gpiozero/pins/local.py \
-                --replace "/proc/cpuinfo" "${proc_cpuinfo}"
+                --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
             '';
           });
-          systemd-python = super.systemd-python.overridePythonAttrs (old: {
+          systemd-python = pyPrev.systemd-python.overridePythonAttrs (old: {
             nativeBuildInputs =
               (old.nativeBuildInputs or [])
               ++ [
-                self.setuptools
+                pyFinal.setuptools
               ];
           });
         });
       };
-  in {
-    overlays.default = final: prev: {
-      cover = self.packages.${prev.system}.default;
     };
+
+    pkgsForSys = system:
+      import nixpkgs {
+        inherit system;
+        overlays = [
+          poetry2nix.overlays.default
+          overlay
+        ];
+      };
+
+    forAllSystems = nixpkgs.lib.genAttrs ["aarch64-linux" "x86_64-linux"];
+  in {
+    overlays.default = overlay;
     nixosModules.default = import ./module.nix;
 
-    packages = {
-      aarch64-linux.default = mkPackage "aarch64-linux";
-      x86_64-linux.default = mkPackage "x86_64-linux";
-    };
+    packages = forAllSystems (system: {
+      default = let pkgs = pkgsForSys system; in pkgs.cover;
+    });
 
     checks.x86_64-linux = let
       nixSrc = nixpkgs.lib.sources.sourceFilesBySuffices self [".nix"];
