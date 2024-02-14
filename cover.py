@@ -407,7 +407,7 @@ def start_daemon(hostname: str):
         for cover in covers:
             try:
                 cover.motor_stop()
-            except BaseException:
+            except BaseException:  # noqa: B036
                 logger.exception(f"failed to stop motor for cover={cover}")
 
 
