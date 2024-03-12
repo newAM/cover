@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.9"
 
 gpiozero = "^2.0"
-paho-mqtt = "^1.6.1"
+paho-mqtt = "^2"
 setuptools = "*"
 systemd-python = "235"
 

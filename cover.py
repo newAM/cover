@@ -348,7 +348,9 @@ def start_daemon(hostname: str):
 
     covers = []
     try:
-        client = mqtt.Client()
+        client = mqtt.Client(
+            callback_api_version=mqtt.CallbackAPIVersion.VERSION1
+        )
 
         covers = [
             Cover(
