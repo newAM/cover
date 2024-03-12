@@ -27,6 +27,13 @@
                 --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
             '';
           });
+          paho-mqtt = pyPrev.paho-mqtt.overridePythonAttrs (old: {
+            nativeBuildInputs =
+              (old.nativeBuildInputs or [])
+              ++ [
+                pyFinal.hatchling
+              ];
+          });
         });
       };
     };
