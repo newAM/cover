@@ -1,50 +1,61 @@
 {
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    poetry2nix.url = "github:nix-community/poetry2nix";
-    poetry2nix.inputs.nixpkgs.follows = "nixpkgs";
-  };
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
   outputs = {
     self,
     nixpkgs,
-    poetry2nix,
   }: let
     overlay = final: prev: {
-      cover = prev.poetry2nix.mkPoetryApplication {
-        projectDir = self;
-        # Hacks to fix: https://github.com/NixOS/nixpkgs/issues/122993
-        overrides = prev.poetry2nix.overrides.withDefaults (pyFinal: pyPrev: {
-          rpi-gpio = pyPrev.rpi-gpio.overridePythonAttrs (old: {
-            postPatch = ''
-              substituteInPlace source/cpuinfo.c \
-                --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
-            '';
-          });
-          gpiozero = pyPrev.gpiozero.overridePythonAttrs (old: {
+      cover = prev.python3.pkgs.buildPythonPackage {
+        name = "cover";
+        format = "pyproject";
+
+        src = self;
+
+        nativeBuildInputs = with prev.python3.pkgs; [
+          poetry-core
+        ];
+
+        propagatedBuildInputs = with prev.python3.pkgs; [
+          # Hacks to fix: https://github.com/NixOS/nixpkgs/issues/122993
+          (prev.python3.pkgs.gpiozero.overridePythonAttrs (old: {
             postPatch = ''
               substituteInPlace gpiozero/pins/local.py \
                 --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
             '';
-          });
-          paho-mqtt = pyPrev.paho-mqtt.overridePythonAttrs (old: {
+          }))
+          (prev.python3.pkgs.buildPythonPackage rec {
+            pname = "systemd-python";
+            version = "235";
+
+            src = prev.python3.pkgs.fetchPypi {
+              inherit pname version;
+              hash = "sha256-Tlfzl5f9XZ4tIriAaiUtfAEGyTYDnR5xyMa4AI5pXAo=";
+            };
+
+            buildInputs = [prev.systemd];
+
+            nativeBuildInputs = [prev.pkg-config];
+
+            pythonImportsCheck = ["systemd"];
+
+            doCheck = false;
+          })
+          (prev.python3.pkgs.paho-mqtt.overridePythonAttrs (old: {
             nativeBuildInputs =
               (old.nativeBuildInputs or [])
               ++ [
-                pyFinal.hatchling
+                hatchling
               ];
-          });
-        });
+          }))
+        ];
       };
     };
 
     pkgsForSys = system:
       import nixpkgs {
         inherit system;
-        overlays = [
-          poetry2nix.overlays.default
-          overlay
-        ];
+        overlays = [overlay];
       };
 
     forAllSystems = nixpkgs.lib.genAttrs ["aarch64-linux" "x86_64-linux"];
