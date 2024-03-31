@@ -16,13 +16,15 @@
           poetry-core
         ];
 
-        propagatedBuildInputs = with prev.python3.pkgs; [
+        propagatedBuildInputs = [
           # Hacks to fix: https://github.com/NixOS/nixpkgs/issues/122993
           (prev.python3.pkgs.gpiozero.overridePythonAttrs (old: {
-            postPatch = ''
-              substituteInPlace gpiozero/pins/local.py \
-                --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
-            '';
+            postPatch =
+              old.postPatch
+              + ''
+                substituteInPlace gpiozero/pins/local.py \
+                  --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
+              '';
           }))
           (prev.python3.pkgs.buildPythonPackage rec {
             pname = "systemd-python";
@@ -45,7 +47,7 @@
             nativeBuildInputs =
               (old.nativeBuildInputs or [])
               ++ [
-                hatchling
+                prev.python3.pkgs.hatchling
               ];
           }))
         ];
