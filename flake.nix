@@ -17,6 +17,7 @@
         ];
 
         propagatedBuildInputs = [
+          prev.python3.pkgs.systemd
           # Hacks to fix: https://github.com/NixOS/nixpkgs/issues/122993
           (prev.python3.pkgs.gpiozero.overridePythonAttrs (old: {
             postPatch =
@@ -26,23 +27,6 @@
                   --replace "/proc/cpuinfo" "${./proc_cpuinfo.txt}"
               '';
           }))
-          (prev.python3.pkgs.buildPythonPackage rec {
-            pname = "systemd-python";
-            version = "235";
-
-            src = prev.python3.pkgs.fetchPypi {
-              inherit pname version;
-              hash = "sha256-Tlfzl5f9XZ4tIriAaiUtfAEGyTYDnR5xyMa4AI5pXAo=";
-            };
-
-            buildInputs = [prev.systemd];
-
-            nativeBuildInputs = [prev.pkg-config];
-
-            pythonImportsCheck = ["systemd"];
-
-            doCheck = false;
-          })
           (prev.python3.pkgs.paho-mqtt.overridePythonAttrs (old: {
             nativeBuildInputs =
               (old.nativeBuildInputs or [])
