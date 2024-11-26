@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.9"
 
 gpiozero = "^2.0"
-paho-mqtt = "^1.6.1"  # add callback_api_version for v2
+paho-mqtt = "^2.1.0"  # add callback_api_version for v2
 systemd-python = "235"
 
 [tool.poetry.scripts]
